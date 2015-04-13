@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AsdPlatform" default="help" basedir=".">
+	<property name="build.base.dir" value="target">
+	</property>
+	<property name="build.dir" value="${build.base.dir}/build">
+	</property>
+	<property name="dist.lib" value="${build.dir}/lib">
+	</property>
+	<property name="classes.dir" value="${build.dir}/classes">
+	</property>
+	<property name="test.classes.dir" value="${build.dir}/test/classes">
+	</property>
+	<property name="test.report.dir" value="${build.dir}/test/report">
+	</property>
+	<property name="src.base.dir" value="src">
+	</property>
+	<property name="src.dir" value="${src.base.dir}/main/java">
+	</property>
+	<property name="test.base.dir" value="${src.base.dir}/test/">
+	</property>
+	<property name="test.dir" value="${test.base.dir}/java">
+	</property>
+	<property name="config.dir" value="${src.base.dir}/main/resources">
+	</property>
+	<property name="test.config.dir" value="${test.base.dir}/resources">
+	</property>
+	<property name="lib.dir" value="lib">
+	</property>
+	<property name="web.dir" value="${src.base.dir}/main/webapp">
+	</property>
+	<property name="deploy.dir" value="../env/deploy">
+	</property>
+
+	<property name="encode" value="UTF-8">
+	</property>
+	<property name="version" value="1.0">
+	</property>
+	<property name="debug" value="true">
+     </property>
+
+	<path id="project.class.path">
+		<pathelement path="${classes.dir}"/>
+		<pathelement path="${test.classes.dir}"/>
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+			<exclude name="tomcat/*.*"/>
+		</fileset>
+	</path>
+
+	<target name="help">
+		<echo>
+		</echo>
+	</target>
+
+	<target name="clean">
+		<echo>===============Begin Clean========================</echo>
+		<delete dir="${build.dir}/">
+		</delete>
+	</target>
+
+	<target name="prepared" depends="clean">
+		<echo>===============Begin Prepared========================</echo>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<mkdir dir="${test.classes.dir}"/>
+		<mkdir dir="${dist.lib}"/>
+	</target>
+
+	<target name="compile" depends="prepared">
+		<echo>===============Begin Compile========================</echo>
+		<copy todir="${classes.dir}">
+			<fileset dir="${config.dir}">
+				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true">
+			<classpath refid="project.class.path">
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="test.compile" depends="prepared">
+		<copy todir="${test.classes.dir}">
+			<fileset dir="${test.config.dir}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<javac srcdir="${test.dir}" destdir="${test.classes.dir}" encoding="${encode}">
+			<classpath refid="project.class.path">
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" unless="debug">
+		<echo>===============Begin Jar========================</echo>
+		<jar destfile="${dist.lib}/${ant.project.name}-${version}.jar">
+			<fileset dir="${classes.dir}">
+				<exclude name="*.*"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="package" depends="jar">
+		<echo>===============Begin package========================</echo>
+		<copy todir="${dist.lib}">
+			<!--Set mapper='flatten' to exclude dir-->
+			<mapper type="flatten"></mapper>
+		    <fileset dir="${lib.dir}">
+		    	<include name="**/*.jar"/>
+		    	<exclude name="/junit/"/>
+		    	<exclude name="/tomcat/"/>
+		    </fileset>
+		</copy>
+		<war destfile="${build.dir}/${ant.project.name}.war" webxml="${web.dir}/WEB-INF/web.xml ">
+			<fileset dir="${web.dir}"></fileset>
+			<lib dir="${dist.lib}"></lib>
+			<classes dir="${config.dir}"></classes>
+			<classes dir="${classes.dir}"></classes>
+		</war>
+	</target>
+	
+	<target name="deploy" depends="package">
+		<echo>===============Begin deploy========================</echo>
+		<delete dir="${deploy.dir}/${ant.project.name}"></delete>
+		<delete file="${deploy.dir}/${ant.project.name}.war"></delete>
+		<copy overwrite="true" todir="${deploy.dir}" file="${build.dir}/${ant.project.name}.war">
+	    </copy>
+	</target>
+	
+	<target name="Test" depends="test.compile">
+		<echo>===============Begin run test case========================</echo>
+		<mkdir dir="${test.report.dir}/xml"/>
+		<mkdir dir="${test.report.dir}/html"/>
+		<junit printsummary="yes" fork="yes">
+			<classpath refid="project.class.path"></classpath>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${test.report.dir}/xml">
+			   <fileset dir="${test.classes.dir}">
+			   	   <include name="**/*TestCase.class"/>
+			   </fileset>
+			</batchtest>
+		</junit>
+		<junitreport>
+			<fileset dir="${test.report.dir}/xml">
+			   <include name="*.xml"/>
+			</fileset>
+			<report todir="${test.report.dir}/html" format="frames"/>
+		</junitreport>
+	</target>
+
+</project>
