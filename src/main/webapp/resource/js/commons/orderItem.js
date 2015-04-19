@@ -7,18 +7,18 @@ orderItemService.controller("orderItemController", function($scope, $resource)
 	var projectName = '/' + window.location.pathname.split('/')[1];
 	var orderItemUrl =
 	{
-		"queryUrl" : projectName + "/query/:desc",
+		"queryUrl" : projectName + "/orderItem/query/:desc",
 		"queryJsonUrl" : projectName + "/queryjson/:desc/mydata.json"
 	};
-	/**var orderItem = $resource(orderItemUrl.queryUrl,{desc:"iphone"}, {'get':  {method:'GET', isArray:true},});
+	var orderItem = $resource(orderItemUrl.queryUrl,{desc:"iphone"}, {'get':  {method:'GET', isArray:true},});
 	var orderList = orderItem.get(function(data){
 		$scope.orderItemList = data;
-	});*/
+	});
 	debugger;
-	var jsonOrderList= $resource(orderItemUrl.queryJsonUrl,{desc:"galaxy"}, {'get':  {method:'GET', isArray:true},});
+	/*var jsonOrderList= $resource(orderItemUrl.queryJsonUrl,{desc:"galaxy"}, {'get':  {method:'GET', isArray:true},});
 	var orderList = jsonOrderList.get(function(data){
 		$scope.orderItemList = data;
-	});
+	});*/
 	
 	
 });

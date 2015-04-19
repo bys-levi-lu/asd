@@ -5,9 +5,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<script type="text/javascript" src="/resource/js/framework/angularjs/angular.js"></script>
-<script type="text/javascript" src="/resource/js/framework/angularjs/angular-resource.js"></script>
-<script type="text/javascript" src="/resource/js/commons/orderItem.js"></script>
+<script type="text/javascript" src="/asd/resource/js/framework/angularjs/angular.js"></script>
+<script type="text/javascript" src="/asd/resource/js/framework/angularjs/angular-resource.js"></script>
+<script type="text/javascript" src="/asd/resource/js/framework/jquery/jquery-2.1.3.js"></script>
+<script type="text/javascript" src="/asd/resource/js/commons/orderItem.js"></script>
 
 </head>
 <body ng-controller="orderItemController">
